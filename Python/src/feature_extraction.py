@@ -8,6 +8,7 @@ import pywt # added
 from scipy.stats import skew, kurtosis # added
 from src.preprocessing import compute_welch_psd
 from tqdm import tqdm
+from src.preprocessing import compute_bandpower
 
 def extract_time_domain_features(epoch):
     """
@@ -427,7 +428,7 @@ def extract_eog_features(eog_signal):
     return features
 
 
-def extract_emg_features(emg_signal):
+def extract_emg_features(emg_signal, fs=None):
     """
     STUDENT TODO: Extract EMG-specific features for muscle tone detection.
 
@@ -443,6 +444,13 @@ def extract_emg_features(emg_signal):
         'emg_power': np.mean(emg_signal**2),
         'emg_var': np.var(emg_signal)
     }
+
+    #High-frequency (20-40 Hz) power ratio
+    if fs is not None:
+        high_freq_band = (20,40)
+        tot_power = np.mean(emg_signal**2) + 1e-12 #just to avoid dividing by 0
+        high_freq_power = compute_bandpower(emg_signal, fs, band=high_freq_band)
+        features['emg_high_freq_ratio'] = high_freq_power/tot_power
 
     # TODO: Students should add:
     # - High-frequency power (muscle activity indicator)
