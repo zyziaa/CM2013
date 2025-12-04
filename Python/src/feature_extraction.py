@@ -2,6 +2,7 @@ from typing import Any
 import numpy as np
 import scipy
 from scipy.stats import entropy #add by Sherry
+from scipy import signal
 from mne_features.univariate import compute_hjorth_complexity
 from spectrum import pburg #add by Sherry
 import pywt # added
@@ -317,8 +318,8 @@ def extract_multi_channel_features(multi_channel_data, channel_info, config):
 
             # Add EMG features (1 channel)
             emg_signal = multi_channel_data['emg'][epoch_idx, 0, :]
-            emg_features = extract_emg_features(emg_signal)
-            epoch_features.extend(list[Any](emg_features.values()))
+            emg_features = extract_emg_features(emg_signal, fs=emg_fs)
+            epoch_features.extend(list(emg_features.values()))
 
         all_features.append(epoch_features)
 
@@ -383,7 +384,7 @@ def extract_single_channel_features(data, channel_info, config):
         # TODO: Students must implement multi-signal features
         print("TODO: Students should use multi-channel data format for iteration 3+")
         n_epochs = data.shape[0] if len(data.shape) > 1 else 1
-        features = np.zeros((n_epochs, 0))  # Empty features - students must implement
+        features = np.array(all_features) # Empty features - students must implement
 
     else:
         raise ValueError(f"Invalid iteration: {config.CURRENT_ITERATION}")
@@ -419,6 +420,12 @@ def extract_eog_features(eog_signal):
         features['eog_mobility'] = np.sqrt(np.var(diff_signal) / var_signal)
     else:
         features['eog_mobility'] = 0
+
+    #REM detection
+    abs_signal = np.abs(eog_signal)
+    threshold = np.mean(abs_signal)+np.std(abs_signal) * 1.96
+    peaks, _ = signal.find_peaks(abs_signal, height=threshold)
+    features['eog_rem_score'] = len(peaks)
 
     # TODO: Students should add:
     # - Eye movement detection features

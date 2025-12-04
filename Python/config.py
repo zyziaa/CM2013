@@ -2,7 +2,7 @@
 
 # Set the current iteration of the project (1-4). 
 # This controls which parts of the pipeline are active.
-CURRENT_ITERATION = 2
+CURRENT_ITERATION = 3
 
 # Set to True to use cached data for preprocessing and feature extraction.
 USE_CACHE = False  # Temporarily disabled for testing with real data
@@ -26,6 +26,8 @@ if not os.path.exists(CACHE_DIR):
 LOW_PASS_FILTER_EEG_FREQ = 40  # Hz
 LOW_PASS_FILTER_EOG_FREQ = 5
 HIGH_PASS_FILTER_FREQ = 0.5 ##Highpass filter frequency add by Sherry
+HIGH_PASS_FILTER_EMG_FREQ = 10.0  
+LOW_PASS_FILTER_EMG_FREQ = 60.0
 
 # -- Feature Extraction --
 # (Add feature-specific parameters here)
