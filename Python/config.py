@@ -5,7 +5,7 @@
 CURRENT_ITERATION = 3
 
 # Set to True to use cached data for preprocessing and feature extraction.
-USE_CACHE = False  # Temporarily disabled for testing with real data
+USE_CACHE = True  # Temporarily disabled for testing with real data
 
 # -- File Paths --
 import os
@@ -51,8 +51,10 @@ elif CURRENT_ITERATION == 2:
 elif CURRENT_ITERATION == 3:
     # Iteration 3: Multi-signal processing with Random Forest
     CLASSIFIER_TYPE = 'random_forest'
-    RF_N_ESTIMATORS = 100
-    RF_MAX_DEPTH = 10
+    RF_N_ESTIMATORS = 300
+    RF_MAX_DEPTH = None
+    RF_CLASS_WEIGHT = 'balanced'
+    RF_MAX_FEATURES = 'sqrt'
 elif CURRENT_ITERATION == 4:
     # Iteration 4: Full system optimization
     CLASSIFIER_TYPE = 'random_forest'
