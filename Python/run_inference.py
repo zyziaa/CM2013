@@ -3,7 +3,7 @@ from src.data_loader import load_holdout_data
 from src.preprocessing import preprocess
 from src.feature_extraction import extract_features
 from src.inference import make_inference, generate_submission_file
-from src.utils import save_cache, load_cache
+from src.utils import save_cache, load_cache, add_contextual_features
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.feature_selection import VarianceThreshold, SelectKBest
 import pandas as pd
@@ -146,14 +146,9 @@ def run_inference():
 
         # 4. Feature Selection (using the same logic as training)
         selected_features = apply_feature_selection(holdout_features, config)
-        '''
-        # 5. Add Contextual Features (using the same logic as training)
-        print("Adding contextual features...")
-        selected_features = add_contextual_features(selected_features, n_prev=2, n_next=2)
-        print(f"Final feature shape after context: {selected_features.shape}")
-        '''
         
-        # 6. Scale features (using saved scaler from training)
+        
+        # 5. Scale features (using saved scaler from training)
         scaler_filename = f"scaler_iter{config.CURRENT_ITERATION}.joblib"
         scaler = load_cache(scaler_filename, config.CACHE_DIR)
         if scaler is None:
@@ -165,7 +160,7 @@ def run_inference():
         
         selected_features_scaled = scaler.transform(selected_features)
 
-        # 7. Make Inference
+        # 6. Make Inference
         predictions = make_inference(model, selected_features_scaled, config)
         
         # Collect predictions with corresponding record and epoch numbers
@@ -176,7 +171,7 @@ def run_inference():
         
         print(f"Generated {n_epochs} predictions for record {record_number}")
 
-    # 5. Generate Submission File
+    # 7. Generate Submission File
     if all_predictions:
         all_predictions = np.array(all_predictions)
         generate_submission_file(all_predictions, all_record_numbers, all_epoch_numbers, config)

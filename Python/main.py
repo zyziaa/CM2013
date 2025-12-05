@@ -115,10 +115,7 @@ def main():
     #selected_features = features
     print(f"Selected features shape: {selected_features.shape}")
 
-    #print("Adding contextual features to SELECTED features...")
-    #selected_features = add_contextual_features(selected_features, n_prev=2, n_next=2)
-    #print(f"Final feature shape for training: {selected_features.shape}")
-
+    
     # 5. Classification
     print("\n=== STEP 5: CLASSIFICATION ===")
     if selected_features.shape[1] > 0:
