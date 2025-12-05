@@ -48,7 +48,7 @@ def select_features(features, labels, config):
         print("Early iteration - using all available features")
         selected_features = features
 
-    if config.CURRENT_ITERATION == 2:
+    if config.CURRENT_ITERATION >= 2:
         # Normalize variance
         scaler=MinMaxScaler()
         var_scaled= scaler.fit_transform(features)
@@ -105,6 +105,8 @@ def select_features(features, labels, config):
         print(f"Select best {k_features} features")
         selected_features = MI_selected_features
 
+
+    '''
     elif config.CURRENT_ITERATION == 3:
         # TODO: Students should implement feature selection here
         # Target: Select ~30 best features from larger set
@@ -125,6 +127,7 @@ def select_features(features, labels, config):
 
         # Placeholder - students must replace:
         selected_features = features  # No selection implemented yet
+    '''
 
     print(f"Selected features shape: {selected_features.shape}")
     return selected_features
