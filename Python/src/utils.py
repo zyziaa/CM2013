@@ -34,6 +34,7 @@ def load_cache(filename, cache_dir):
     print(f"Cache file not found: {filepath}")
     return None
 
+'''
 def add_contextual_features(features, n_prev=2, n_next=2):
     #Concatenate features from previous and next n epochs to the current epoch.
 
@@ -50,3 +51,4 @@ def add_contextual_features(features, n_prev=2, n_next=2):
         features_context.append(window.flatten())
         
     return np.array(features_context)
+    '''
