@@ -2,7 +2,7 @@
 
 # Set the current iteration of the project (1-4). 
 # This controls which parts of the pipeline are active.
-CURRENT_ITERATION = 3
+CURRENT_ITERATION = 4
 
 # Set to True to use cached data for preprocessing and feature extraction.
 USE_CACHE = True  # Temporarily disabled for testing with real data
@@ -33,7 +33,7 @@ LOW_PASS_FILTER_EMG_FREQ = 60.0
 # (Add feature-specific parameters here)
 
 # -- Feature Selection --
-FEATURE_SELECTION_K = 50
+FEATURE_SELECTION_K = 30
 
 # -- Classification --
 # Iteration-specific parameters - students should modify these based on current iteration
@@ -58,8 +58,10 @@ elif CURRENT_ITERATION == 3:
 elif CURRENT_ITERATION == 4:
     # Iteration 4: Full system optimization
     CLASSIFIER_TYPE = 'random_forest'
-    RF_N_ESTIMATORS = 200
+    RF_N_ESTIMATORS = 300
     RF_MAX_DEPTH = None
+    RF_CLASS_WEIGHT = 'balanced'
+    RF_MAX_FEATURES = 'sqrt'
     RF_MIN_SAMPLES_SPLIT = 5
 else:
     raise ValueError(f"Invalid CURRENT_ITERATION: {CURRENT_ITERATION}. Must be 1-4.")

@@ -93,7 +93,7 @@ def select_features(features, labels, config):
         print(f"Saved correlation mask to {corrmask_filename}")
 
         #Statistical Testing (Option B:Mutual Information)
-        k_features = getattr(config, 'FEATURE_SELECTION_K', 50)
+        k_features = getattr(config, 'FEATURE_SELECTION_K', 30)
         selector = SelectKBest(mutual_info_classif, k=k_features)
         MI_selected_features = selector.fit_transform(corr_selected_features, labels)
         
