@@ -11,7 +11,7 @@ from src.visualization import visualize_fft
 from src.visualization import visualize_signal
 from src.visualization import plot_confusion_matrix
 from src.report import generate_report
-from src.utils import save_cache, load_cache
+from src.utils import save_cache, load_cache, add_contextual_features
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay 
 import matplotlib.pyplot as plt 
 import os
@@ -114,6 +114,10 @@ def main():
     selected_features = select_features(features, labels, config)
     #selected_features = features
     print(f"Selected features shape: {selected_features.shape}")
+
+    print("Adding contextual features to SELECTED features...")
+    selected_features = add_contextual_features(selected_features, n_prev=1, n_next=1)
+    print(f"Final feature shape for training: {selected_features.shape}")
 
     
     # 5. Classification

@@ -48,7 +48,7 @@ def select_features(features, labels, config):
         print("Early iteration - using all available features")
         selected_features = features
 
-    if config.CURRENT_ITERATION >= 2:
+    elif config.CURRENT_ITERATION >= 2:
         # Normalize variance
         scaler=MinMaxScaler()
         var_scaled= scaler.fit_transform(features)
@@ -95,7 +95,8 @@ def select_features(features, labels, config):
         #Statistical Testing (Option B:Mutual Information)
         k_features = getattr(config, 'FEATURE_SELECTION_K', 30)
         selector = SelectKBest(mutual_info_classif, k=k_features)
-        MI_selected_features = selector.fit_transform(corr_selected_features, labels)
+        corr_selected_features_array = corr_selected_features.values if isinstance(corr_selected_features, pd.DataFrame) else corr_selected_features
+        MI_selected_features = selector.fit_transform(corr_selected_features_array, labels)
         
         # Save selector for inference
         selector_filename = f"feature_selector_iter{config.CURRENT_ITERATION}.joblib"
