@@ -72,6 +72,7 @@ def train_classifier(features, labels, groups, config, scaler):
                 n_estimators=getattr(config, 'RF_N_ESTIMATORS', 100),
                 max_depth=getattr(config, 'RF_MAX_DEPTH', None),
                 min_samples_split=getattr(config, 'RF_MIN_SAMPLES_SPLIT', 2),
+                min_samples_leaf=getattr(config, 'RF_MIN_SAMPLES_LEAF', 1),
                 class_weight=getattr(config, 'RF_CLASS_WEIGHT', 'balanced'),
                 max_features=getattr(config, 'RF_MAX_FEATURES', 'sqrt'),
                 random_state=42,
@@ -172,7 +173,8 @@ def train_classifier(features, labels, groups, config, scaler):
             n_estimators=getattr(config, 'RF_N_ESTIMATORS', 100),
             max_depth=getattr(config, 'RF_MAX_DEPTH', None),
             min_samples_split=getattr(config, 'RF_MIN_SAMPLES_SPLIT', 2),
-            class_weight=getattr(config, 'RF_CLASS_WEIGHT', None),
+            min_samples_leaf=getattr(config, 'RF_MIN_SAMPLES_LEAF', 1),
+            class_weight=getattr(config, 'RF_CLASS_WEIGHT', 'balanced'),
             max_features=getattr(config, 'RF_MAX_FEATURES', 'sqrt'),
             random_state=42,
             n_jobs=-1
