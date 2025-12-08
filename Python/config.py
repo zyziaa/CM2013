@@ -5,7 +5,7 @@
 CURRENT_ITERATION = 4
 
 # Set to True to use cached data for preprocessing and feature extraction.
-USE_CACHE = True  # Temporarily disabled for testing with real data
+USE_CACHE = False  # Temporarily disabled for testing with real data
 
 # -- File Paths --
 import os

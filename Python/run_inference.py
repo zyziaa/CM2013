@@ -3,7 +3,7 @@ from src.data_loader import load_holdout_data
 from src.preprocessing import preprocess
 from src.feature_extraction import extract_features
 from src.inference import make_inference, generate_submission_file
-from src.utils import save_cache, load_cache
+from src.utils import save_cache, load_cache, add_contextual_features
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.feature_selection import VarianceThreshold, SelectKBest
 import pandas as pd
@@ -146,6 +146,7 @@ def run_inference():
 
         # 4. Feature Selection (using the same logic as training)
         selected_features = apply_feature_selection(holdout_features, config)
+        selected_features = add_contextual_features(selected_features, n_prev=1, n_next=1)
         
         
         # 5. Scale features (using saved scaler from training)
