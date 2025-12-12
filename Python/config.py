@@ -58,12 +58,12 @@ elif CURRENT_ITERATION == 3:
 elif CURRENT_ITERATION == 4:
     # Iteration 4: Full system optimization
     CLASSIFIER_TYPE = 'random_forest'
-    RF_N_ESTIMATORS = 500
-    RF_MAX_DEPTH = None
-    RF_CLASS_WEIGHT = 'balanced'
+    RF_N_ESTIMATORS = 800
+    RF_MAX_DEPTH = 25
+    RF_CLASS_WEIGHT = 'balanced_subsample'
     RF_MAX_FEATURES = 'sqrt'
-    RF_MIN_SAMPLES_SPLIT = 2 
-    RF_MIN_SAMPLES_LEAF = 1  
+    RF_MIN_SAMPLES_SPLIT = 5 
+    RF_MIN_SAMPLES_LEAF = 2 
 else:
     raise ValueError(f"Invalid CURRENT_ITERATION: {CURRENT_ITERATION}. Must be 1-4.")
 

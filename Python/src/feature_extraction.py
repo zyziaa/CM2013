@@ -287,6 +287,7 @@ def extract_multi_channel_features(multi_channel_data, channel_info, config):
 
     for epoch_idx in tqdm(range(n_epochs), desc="Extracting Features"):
         epoch_features = []
+        eeg_energies=[]
 
         # EEG features (2 channels)
         for ch in range(multi_channel_data['eeg'].shape[1]):
@@ -294,6 +295,9 @@ def extract_multi_channel_features(multi_channel_data, channel_info, config):
             eeg_features = extract_time_domain_features(eeg_signal)
             epoch_features.extend(list(eeg_features.values()))
             
+            if 'total_energy' in eeg_features:
+                eeg_energies.append(eeg_features['total_energy'])
+
             # Iteration 2+: Add frequency domain features (AR + Welch + Wavelet)
             if config.CURRENT_ITERATION >= 2:
                 eeg_freq_features = extract_frequency_domain_features(
@@ -320,6 +324,18 @@ def extract_multi_channel_features(multi_channel_data, channel_info, config):
             emg_signal = multi_channel_data['emg'][epoch_idx, 0, :]
             emg_features = extract_emg_features(emg_signal, fs=emg_fs)
             epoch_features.extend(list(emg_features.values()))
+
+            if 'emg_power' in emg_features:
+                epoch_features.append(np.log1p(emg_features['emg_power']))
+            else:
+                epoch_features.append(0)
+            
+            #EMG / EEG Energy Ratio
+            avg_eeg_energy = np.mean(eeg_energies) if eeg_energies else 1.0
+            emg_p = emg_features.get('emg_power', 0)
+
+            ratio = emg_p / (avg_eeg_energy + 1e-10)
+            epoch_features.append(ratio)
 
         all_features.append(epoch_features)
 

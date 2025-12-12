@@ -11,7 +11,7 @@ from src.visualization import visualize_fft
 from src.visualization import visualize_signal
 from src.visualization import plot_confusion_matrix
 from src.report import generate_report
-from src.utils import save_cache, load_cache, add_contextual_features
+from src.utils import save_cache, load_cache, add_contextual_features, normalize_features_by_subject
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay 
 import matplotlib.pyplot as plt 
 import os
@@ -108,6 +108,9 @@ def main():
             save_cache(features, cache_filename_features, config.CACHE_DIR)
             print("Saved features to cache")
 
+    if features is not None and len(features)>0:
+        features=normalize_features_by_subject(features, all_record_ids)
+
 
     # 4. Feature Selection
     print("\n=== STEP 4: FEATURE SELECTION ===")
@@ -116,7 +119,7 @@ def main():
     print(f"Selected features shape: {selected_features.shape}")
 
     print("Adding contextual features to SELECTED features...")
-    selected_features = add_contextual_features(selected_features, n_prev=1, n_next=1)
+    selected_features = add_contextual_features(selected_features, n_prev=2, n_next=2)
     print(f"Final feature shape for training: {selected_features.shape}")
 
     

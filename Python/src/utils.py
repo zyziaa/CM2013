@@ -48,3 +48,17 @@ def add_contextual_features(features, n_prev=2, n_next=2):
         features_context.append(window.flatten())
         
     return np.array(features_context)
+
+def normalize_features_by_subject(features, record_ids):
+    normalize_features=np.zeros_like(features)
+    unique_subjects=np.unique(record_ids)
+
+    from sklearn.preprocessing import StandardScaler
+
+    for sub in unique_subjects:
+        mask=(record_ids==sub)
+        if np.sum(mask)>0:
+            scaler=StandardScaler()
+            normalize_features[mask]=scaler.fit_transform(features[mask])
+
+    return normalize_features
