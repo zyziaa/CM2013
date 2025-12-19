@@ -34,7 +34,7 @@ def load_cache(filename, cache_dir):
     print(f"Cache file not found: {filepath}")
     return None
 
-def add_contextual_features(features, n_prev=2, n_next=2):
+def add_contextual_features(features, n_prev=1, n_next=1):
     n_epochs, n_feats = features.shape
     features_context = []
     

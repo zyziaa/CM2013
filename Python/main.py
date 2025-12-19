@@ -4,12 +4,7 @@ from src.preprocessing import preprocess
 from src.feature_extraction import extract_features
 from src.feature_selection import select_features
 from src.classification import train_classifier
-from src.visualization import visualize_results
-from src.visualization import plot_hypnogram
-from src.visualization import plot_sample_epoch
-from src.visualization import visualize_fft
-from src.visualization import visualize_signal
-from src.visualization import plot_confusion_matrix
+from src.visualization import visualize_results, plot_hypnogram, plot_sample_epoch, visualize_fft, visualize_signal, plot_confusion_matrix
 from src.report import generate_report
 from src.utils import save_cache, load_cache, add_contextual_features, normalize_features_by_subject
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay 
@@ -36,7 +31,6 @@ def main():
     print(f"--- Sleep Scoring Pipeline - Iteration {config.CURRENT_ITERATION} ---")
 
     # 1. Load Data
-    # Example uses R1.edf and R1.xml from training directory
     print("\n=== STEP 1: DATA LOADING ===")
 
     #Loading all data
@@ -48,16 +42,6 @@ def main():
     print(f"  EOG: {multi_channel_data['eog'].shape}")
     print(f"  EMG: {multi_channel_data['emg'].shape}")
     print(f"Labels shape: {labels.shape}")
-    ''' 
-    example_edf_file = os.path.join(config.TRAINING_DIR, "R1.edf")
-    example_xml_file = os.path.join(config.TRAINING_DIR, "R1.xml")
-    if os.path.exists(example_xml_file):
-        plot_hypnogram(example_xml_file)
-    if os.path.exists(example_edf_file):
-        plot_sample_epoch(example_edf_file, epoch_idx=0)
-    
-    plt.show()'''
-   
     
     # 2. Preprocessing
     print("\n=== STEP 2: PREPROCESSING ===")
@@ -77,18 +61,6 @@ def main():
             print("Saved preprocessed data to cache")
     
     raw_signal = multi_channel_data['eog'][0,0,:]
-    ''' 
-    visualize_signal(raw_signal if isinstance(raw_signal, np.ndarray) else raw_signal, 
-                 fs=channel_info['eog_fs'], title="Raw EOG Signal (Time Domain)")
-    visualize_fft(raw_signal if isinstance(raw_signal, np.ndarray) else raw_signal, 
-              fs=channel_info['eog_fs'], title="Raw EOG Signal FFT")
-    visualize_signal(preprocessed_data[0] if isinstance(preprocessed_data, np.ndarray) 
-                 else preprocessed_data['eog'][0,0,:], fs=channel_info['eog_fs'], title="Filtered EOG Signal (Time Domain)")
-    visualize_fft(preprocessed_data[0] if isinstance(preprocessed_data, np.ndarray) 
-              else preprocessed_data['eog'][0,0,:], fs=channel_info['eog_fs'], title="Filtered EOG Signal FFT")
-
-    plt.show()'''
-   
 
     # 3. Feature Extraction
     print("\n=== STEP 3: FEATURE EXTRACTION ===")

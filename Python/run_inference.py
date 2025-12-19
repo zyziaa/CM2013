@@ -146,7 +146,7 @@ def run_inference():
 
         # 4. Feature Selection (using the same logic as training)
         selected_features = apply_feature_selection(holdout_features, config)
-        selected_features = add_contextual_features(selected_features, n_prev=2, n_next=2)
+        selected_features = add_contextual_features(selected_features, n_prev=1, n_next=1)
         
         
         # 5. Scale features (using saved scaler from training)

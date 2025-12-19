@@ -24,7 +24,6 @@ def calculate_sleep_metrics(labels, epoch_duration=30):
     labels = np.array(labels)
     recording_time_min = (len(labels) * epoch_duration) / 60.0
 
-    # Students must implement based on definitions above
     metrics = {
         "Total recording time [min]": recording_time_min
     }
@@ -130,8 +129,6 @@ def generate_report(model, features, labels, config, processing_log, y_true_all=
     """
     Generates a report summarizing the results.
 
-    For the jumpstart, this is a placeholder.
-
     Args:
         model (object): The trained model.
         features (np.ndarray): The input features.
@@ -139,11 +136,6 @@ def generate_report(model, features, labels, config, processing_log, y_true_all=
         config (module): The configuration module.
     """
     print("Generating report...")
-    # TODO: Implement a function to generate a comprehensive report 
-    # (e.g., as a text file or PDF) that includes:
-    # - Performance metrics (accuracy, kappa, F1-score)
-    # - Confusion matrix
-    # - Details about the model and features used
     
     # After prediction
 

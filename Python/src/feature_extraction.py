@@ -1,25 +1,19 @@
 from typing import Any
 import numpy as np
 import scipy
-from scipy.stats import entropy #add by Sherry
+from scipy.stats import entropy, skew, kurtosis 
 from scipy import signal
 from mne_features.univariate import compute_hjorth_complexity
-from spectrum import pburg #add by Sherry
-import pywt # added
-from scipy.stats import skew, kurtosis # added
-from src.preprocessing import compute_welch_psd
+from spectrum import pburg
+import pywt 
+from src.preprocessing import compute_welch_psd, compute_bandpower
 from tqdm import tqdm
-from src.preprocessing import compute_bandpower
 
 def extract_time_domain_features(epoch):
     """
-    EXAMPLE: Extract basic time-domain features from a single epoch.
+    Extract basic 16 time-domain features from a single epoch.
 
-    This is a MINIMAL example with only 3 features.
-    Students must implement the remaining 13+ time-domain features.
-
-    Works for any signal type (EEG, EOG, EMG) but students should consider
-    signal-specific features for optimal performance.
+    Works for any signal type (EEG, EOG, EMG)
 
     Args:
         epoch (np.ndarray): A 1D array representing one epoch of signal data.
@@ -27,7 +21,6 @@ def extract_time_domain_features(epoch):
     Returns:
         dict: A dictionary of features.
     """
-    # EXAMPLE: Only 3 basic features - students must add 13+ more
     features = {
         'mean': np.mean(epoch),
         'median': np.median(epoch),
@@ -88,7 +81,7 @@ def AR_method(epoch, fs, order=16, nfft=512, freqs=None, masks=None, total_mask=
     """
     Burg-based AR feature extraction.
     """
-    #just to ensure that masks exist (safe default)
+    #Ensure that masks exist (safe default)
     if masks is None or freqs is None or total_mask is None:
         freqs, masks, total_mask = prepare_freqs_masks(fs, nfft)
 
@@ -98,16 +91,16 @@ def AR_method(epoch, fs, order=16, nfft=512, freqs=None, masks=None, total_mask=
     try:
         freqs_ar = np.array(p.frequencies())
     except Exception:
-        # some versions expose different API; if not available, assume pburg used same grid
+        # Some versions expose different API; if not available, assume pburg used same grid
         freqs_ar = freqs
 
-    # interpolate PSD to precomputed freq grid if needed
+    # Interpolate PSD to precomputed freq grid if needed
     if not np.allclose(freqs, freqs_ar):
         psd = np.interp(freqs, freqs_ar, psd)
 
     AR_features = {}
 
-    # band powers
+    # Band powers
     band_powers = {}
     for name, mask in masks.items():
         if np.any(mask):
@@ -117,30 +110,30 @@ def AR_method(epoch, fs, order=16, nfft=512, freqs=None, masks=None, total_mask=
 
     total_power = np.trapezoid(psd[total_mask], freqs[total_mask]) + 1e-12
 
-    # relative powers
+    # Relative powers
     for name in band_powers:
         AR_features[f"rel_{name}"] = band_powers[name] / total_power
 
-    # ratios
+    # Ratios
     AR_features["delta_alpha_ratio"] = band_powers["delta"] / (band_powers["alpha"] + 1e-12)
     AR_features["theta_beta_ratio"]  = band_powers["theta"] / (band_powers["beta"]  + 1e-12)
     AR_features["slow_fast_ratio"]   = (band_powers["delta"] + band_powers["theta"]) / \
                                       (band_powers["alpha"] + band_powers["beta"] + 1e-12)
 
-    # spectral edge (95%)
+    # Spectral edge (95%)
     cumulative = np.cumsum(psd)
     threshold = 0.95 * cumulative[-1]
     idx = np.searchsorted(cumulative, threshold)
     AR_features["edge_freq"] = freqs[min(idx, len(freqs)-1)]
 
-    # peak frequency inside total_mask
+    # Peak frequency inside total_mask
     tm = total_mask
     if np.any(tm):
         AR_features["ar_peak_freq"] = freqs[tm][np.argmax(psd[tm])]
     else:
         AR_features["ar_peak_freq"] = freqs[np.argmax(psd)]
 
-    #Spectral entropy measures (1 feature)
+    # Spectral entropy measures
 
     AR_features['entropy']=entropy(psd)
     
@@ -239,9 +232,8 @@ def entropy(psd):
     
 def extract_features(data, channel_info, config):
     """
-    STUDENT IMPLEMENTATION AREA: Extract features based on current iteration.
 
-    This function should handle both single-channel (old format) and
+    This function handles both single-channel (old format) and
     multi-channel data (new format with 2 EEG + 2 EOG + 1 EMG channels).
 
     Iteration 1: 16 time-domain features per EEG channel
@@ -272,8 +264,6 @@ def extract_features(data, channel_info, config):
 def extract_multi_channel_features(multi_channel_data, channel_info, config):
     """
     Extract features from multi-channel data: 2 EEG + 2 EOG + 1 EMG channels.
-
-    Students should expand this significantly!
     """
     eeg_fs = channel_info['eeg_fs']
     eog_fs = channel_info['eog_fs']
@@ -357,8 +347,7 @@ def extract_single_channel_features(data, channel_info, config):
     Backward compatibility for single-channel data.
     """
     if config.CURRENT_ITERATION == 1:
-        # Iteration 1: Time-domain features (TARGET: 16 features)
-        # CURRENT: Only 3 features implemented - students must add 13 more!
+        # Iteration 1: Time-domain features
         all_features = []
         for epoch in data:
             features = extract_time_domain_features(epoch)
@@ -366,11 +355,10 @@ def extract_single_channel_features(data, channel_info, config):
         features = np.array(all_features)
 
         print(f"{features.shape[1]} features extracted")
-        #print(f"WARNING: Only {features.shape[1]} features extracted, target is 16 for iteration 1")
-        #print("Students must implement the remaining time-domain features!")
 
-    elif config.CURRENT_ITERATION == 2:
-        # Iteration 2: Time domain + Frequency domain (AR + Welch + Wavelet)
+
+    elif config.CURRENT_ITERATION >= 2:
+        # Time domain + Frequency domain (AR + Welch + Wavelet)
         fs = channel_info['eeg_fs']  # Get sampling frequency from channel_info
         all_features = []
 
@@ -395,13 +383,6 @@ def extract_single_channel_features(data, channel_info, config):
 
         features = np.array(all_features)
 
-    
-    elif config.CURRENT_ITERATION >= 3:
-        # TODO: Students must implement multi-signal features
-        print("TODO: Students should use multi-channel data format for iteration 3+")
-        n_epochs = data.shape[0] if len(data.shape) > 1 else 1
-        features = np.array(all_features) # Empty features - students must implement
-
     else:
         raise ValueError(f"Invalid iteration: {config.CURRENT_ITERATION}")
 
@@ -410,8 +391,7 @@ def extract_single_channel_features(data, channel_info, config):
 
 def extract_eog_features(eog_signal):
     """
-    STUDENT TODO: Extract EOG-specific features for eye movement detection.
-
+    Extract EOG-specific features for eye movement detection.
     EOG signals are used to detect:
     - Rapid eye movements (REM sleep indicator)
     - Slow eye movements
@@ -443,18 +423,12 @@ def extract_eog_features(eog_signal):
     peaks, _ = signal.find_peaks(abs_signal, height=threshold)
     features['eog_rem_score'] = len(peaks)
 
-    # TODO: Students should add:
-    # - Eye movement detection features
-    # - Rapid vs slow movement discrimination
-    # - Cross-channel correlations (left vs right eye)
-
     return features
 
 
 def extract_emg_features(emg_signal, fs=None):
     """
-    STUDENT TODO: Extract EMG-specific features for muscle tone detection.
-
+    Extract EMG-specific features for muscle tone detection.
     EMG signals are used to detect:
     - Muscle tone levels (high in wake, low in REM)
     - Muscle twitches and artifacts
@@ -474,10 +448,5 @@ def extract_emg_features(emg_signal, fs=None):
         tot_power = np.mean(emg_signal**2) + 1e-12 #just to avoid dividing by 0
         high_freq_power = compute_bandpower(emg_signal, fs, band=high_freq_band)
         features['emg_high_freq_ratio'] = high_freq_power/tot_power
-
-    # TODO: Students should add:
-    # - High-frequency power (muscle activity indicator)
-    # - Spectral edge frequency
-    # - Muscle tone quantification
 
     return features

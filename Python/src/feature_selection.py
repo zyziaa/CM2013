@@ -12,7 +12,7 @@ except ImportError:
 
 def select_features(features, labels, config):
     """
-    STUDENT IMPLEMENTATION AREA: Select most relevant features.
+    Select most relevant features.
 
     Feature selection becomes important in later iterations to:
     1. Reduce overfitting
@@ -105,30 +105,6 @@ def select_features(features, labels, config):
 
         print(f"Select best {k_features} features")
         selected_features = MI_selected_features
-
-
-    '''
-    elif config.CURRENT_ITERATION == 3:
-        # TODO: Students should implement feature selection here
-        # Target: Select ~30 best features from larger set
-        print("TODO: Students should implement feature selection for iteration 3")
-        print("Suggested: Use SelectKBest with f_classif to select ~30 features")
-        print("Example code:")
-        print("  from sklearn.feature_selection import SelectKBest, f_classif")
-        print("  selector = SelectKBest(f_classif, k=30)")
-        print("  selected_features = selector.fit_transform(features, labels)")
-
-        # Placeholder - students must replace:
-        selected_features = features  # No selection implemented yet
-
-    elif config.CURRENT_ITERATION == 4:
-        # TODO: Students should implement advanced feature selection
-        print("TODO: Students should implement advanced feature selection for iteration 4")
-        print("Suggested: Use more sophisticated methods like RFE or feature importance")
-
-        # Placeholder - students must replace:
-        selected_features = features  # No selection implemented yet
-    '''
 
     print(f"Selected features shape: {selected_features.shape}")
     return selected_features

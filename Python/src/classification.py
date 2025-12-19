@@ -11,7 +11,7 @@ from imblearn.over_sampling import SMOTE
 import pandas as pd
 from tqdm import tqdm
 
-#This one is LOSO (Strategy B)
+#LOSO cross validation
 def train_classifier(features, labels, groups, config, scaler):
     print(f"Training {config.CLASSIFIER_TYPE} classifier...")
     print(f"Features shape: {features.shape}, Labels shape: {labels.shape}, Groups shape: {groups.shape}")
@@ -47,18 +47,17 @@ def train_classifier(features, labels, groups, config, scaler):
             X_train_resampled, y_train_resampled = X_train, y_train
 
         if config.CURRENT_ITERATION ==1:
-            model_weights = getattr(config, 'KNN_WEIGHTS', 'uniform') #(Can be change in config)
+            model_weights = getattr(config, 'KNN_WEIGHTS', 'uniform') 
             model = KNeighborsClassifier(n_neighbors=config.KNN_N_NEIGHBORS, weights=model_weights)
             print(f"Using k-NN with k={config.KNN_N_NEIGHBORS} and weights ='{model_weights}")
         
         elif config.CURRENT_ITERATION == 2:
         # Iteration 2: SVM
-        # TODO: Students should tune hyperparameters (C, kernel, gamma)
             model = SVC(
                 C=getattr(config, 'SVM_C', 10.0),
                 kernel=getattr(config, 'SVM_KERNEL', 'rbf'),
                 gamma=getattr(config, 'SVM_GAMMA', 'scale'), 
-                class_weight='balanced', #added
+                class_weight='balanced', 
                 cache_size=2000,
                 random_state=42,
                 probability=True
@@ -67,7 +66,6 @@ def train_classifier(features, labels, groups, config, scaler):
 
         elif config.CURRENT_ITERATION >= 3:
             # Iteration 3+: Random Forest
-            # TODO: Students should tune hyperparameters (n_estimators, max_depth, etc.)
             model = RandomForestClassifier(
                 n_estimators=getattr(config, 'RF_N_ESTIMATORS', 100),
                 max_depth=getattr(config, 'RF_MAX_DEPTH', None),
